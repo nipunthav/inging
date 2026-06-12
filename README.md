@@ -17,11 +17,3 @@ Problem List:
 [problem list]
 Plan:
 [plan]
-
-Removed from previous version:
-- Progress, Consult, Discharge templates
-- Template label
-- Save teacher favorite
-- Auto-hyphen formatting for Plan
-- Subtitle under app name
-- Export to text feature
