@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Inging Rubcase</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #2b2f34;
+      --panel: #383d44;
+      --input: #24282d;
+      --border: #5c6470;
+      --text: #e5e7eb;
+      --muted: #aeb6c2;
+      --accent: #d1d5db;
+      --accent-text: #111827;
+      --success: #bbf7d0;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(96vw, 1180px);
+      margin: 20px auto;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 1.55rem;
+      color: #f9fafb;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: var(--input);
+      color: #f9fafb;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      white-space: pre-wrap;
+    }
+
+    #output {
+      min-height: 540px;
+      font-size: 1rem;
+      line-height: 1.45;
+      background: #20242a;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sex-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sex-row button {
+      margin-top: 0;
+      background: #555b63;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .sex-row button.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .secondary {
+      background: #555b63;
+      color: #f3f4f6;
+      border: 1px solid var(--border);
+    }
+
+    #status {
+      min-height: 24px;
+      margin-bottom: 0;
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      #output {
+        min-height: 360px;
+      }
+
+      .row-2,
+      .row-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>Inging Rubcase</h1>
+
+    <section class="layout">
+      <div class="panel">
+        <label for="teacher">Teacher name</label>
+        <input id="teacher" type="text" placeholder="ชื่ออาจารย์" />
+
+        <label for="ward">Ward name</label>
+        <input id="ward" type="text" placeholder="เช่น LR, PP, GYN" />
+
+        <label for="patient">Patient name</label>
+        <input id="patient" type="text" placeholder="ชื่อผู้ป่วย" />
+
+        <div class="row-2">
+          <div>
+            <label>Sex</label>
+            <div class="sex-row">
+              <button type="button" id="maleBtn" class="active" onclick="setSex('Male')">Male</button>
+              <button type="button" id="femaleBtn" onclick="setSex('Female')">Female</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="age">Age</label>
+            <input id="age" type="number" min="0" placeholder="อายุ" />
+          </div>
+        </div>
+
+        <label for="hn">HN</label>
+        <input id="hn" type="text" placeholder="HN" />
+
+        <label for="ud">U/D</label>
+        <textarea id="ud" placeholder="โรคประจำตัว เช่น DM, HT, no known U/D"></textarea>
+
+        <label for="problem">Problem List</label>
+        <textarea id="problem" placeholder="ใส่ problem list"></textarea>
+
+        <label for="plan">Plan</label>
+        <textarea id="plan" placeholder="ใส่แผนการรักษา"></textarea>
+
+        <div class="row-3">
+          <button type="button" onclick="generateMessage()">Generate</button>
+          <button type="button" class="secondary" onclick="clearCase()">Clear</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <label for="output">Generated message</label>
+        <textarea id="output" readonly></textarea>
+
+        <button type="button" onclick="copyMessage()">Copy</button>
+        <p id="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let selectedSex = "Male";
+
+    const fields = ["teacher", "ward", "patient", "age", "hn", "ud", "problem", "plan"];
+
+    function valueOf(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function setSex(sex) {
+      selectedSex = sex;
+      document.getElementById("maleBtn").classList.toggle("active", sex === "Male");
+      document.getElementById("femaleBtn").classList.toggle("active", sex === "Female");
+      generateMessage();
+      saveData();
+    }
+
+    function generateMessage() {
+      const message =
+`รับใหม่ อ.${valueOf("teacher")}
+Ward: ${valueOf("ward")}
+ผู้ป่วย: ${valueOf("patient")} ${selectedSex} ${valueOf("age")}y
+HN: ${valueOf("hn")}
+U/D: ${valueOf("ud")}
+Problem List:
+${valueOf("problem")}
+Plan:
+${valueOf("plan")}`;
+
+      document.getElementById("output").value = message;
+      document.getElementById("status").textContent = "Generated";
+      saveData();
+    }
+
+    function copyMessage() {
+      generateMessage();
+      const output = document.getElementById("output");
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(output.value).then(function() {
+          document.getElementById("status").textContent = "Copied. Paste it into LINE.";
+        }).catch(function() {
+          fallbackCopy(output);
+        });
+      } else {
+        fallbackCopy(output);
+      }
+    }
+
+    function fallbackCopy(output) {
+      output.removeAttribute("readonly");
+      output.select();
+      output.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      output.setAttribute("readonly", true);
+      document.getElementById("status").textContent = "Copied. Paste it into LINE.";
+    }
+
+    function saveData() {
+      const data = { selectedSex };
+
+      fields.forEach(id => {
+        data[id] = document.getElementById(id).value;
+      });
+
+      localStorage.setItem("ingingRubcaseSimplifiedData", JSON.stringify(data));
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("ingingRubcaseSimplifiedData") || "{}");
+
+      selectedSex = data.selectedSex || "Male";
+      document.getElementById("maleBtn").classList.toggle("active", selectedSex === "Male");
+      document.getElementById("femaleBtn").classList.toggle("active", selectedSex === "Female");
+
+      fields.forEach(id => {
+        if (data[id] !== undefined) {
+          document.getElementById(id).value = data[id];
+        }
+      });
+    }
+
+    function clearCase() {
+      ["patient", "age", "hn", "ud", "problem", "plan"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+
+      selectedSex = "Male";
+      document.getElementById("maleBtn").classList.add("active");
+      document.getElementById("femaleBtn").classList.remove("active");
+
+      generateMessage();
+      document.getElementById("status").textContent = "Case cleared. Teacher and ward kept.";
+    }
+
+    fields.forEach(id => {
+      document.getElementById(id).addEventListener("input", generateMessage);
+    });
+
+    loadData();
+    generateMessage();
+  </script>
+</body>
+</html>
